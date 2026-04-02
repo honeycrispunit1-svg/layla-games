@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Picks ⚡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .intro p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        .start-btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .start-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .question-counter {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .question {
+            text-align: center;
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 600;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .option {
+            flex: 1;
+            padding: 25px 15px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        .option:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+        .option:active {
+            transform: scale(0.98);
+        }
+        .timer {
+            text-align: center;
+            font-size: 2em;
+            color: #764ba2;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .result {
+            text-align: center;
+        }
+        .result h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+        .personality-type {
+            background: #f0f4ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        .personality-type h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        .personality-desc {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+        .stats {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .stat-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+        .restart {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quick Picks ⚡</h1>
+        <div id="game"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "Chocolate or Vanilla?", a: "Chocolate", b: "Vanilla", category: "lifestyle" },
+            { q: "Sunrise or Sunset?", a: "Sunrise", b: "Sunset", category: "energy" },
+            { q: "Rain or Snow?", a: "Rain", b: "Snow", category: "lifestyle" },
+            { q: "Dancing or Singing?", a: "Dancing", b: "Singing", category: "social" },
+            { q: "Road Trip or Flight?", a: "Road Trip", b: "Flight", category: "adventure" },
+            { q: "Spicy or Mild?", a: "Spicy", b: "Mild", category: "adventure" },
+            { q: "Fitness or Foodie?", a: "Fitness", b: "Foodie", category: "lifestyle" },
+            { q: "Lake or Ocean?", a: "Lake", b: "Ocean", category: "adventure" },
+            { q: "Ice Cream or Cake?", a: "Ice Cream", b: "Cake", category: "lifestyle" },
+            { q: "Sneakers or Boots?", a: "Sneakers", b: "Boots", category: "lifestyle" },
+            { q: "Comedy or Drama?", a: "Comedy", b: "Drama", category: "energy" },
+            { q: "Podcast or Music?", a: "Podcast", b: "Music", category: "energy" },
+            { q: "Window or Aisle?", a: "Window", b: "Aisle", category: "lifestyle" },
+            { q: "Dinner Date or Brunch?", a: "Dinner", b: "Brunch", category: "social" },
+            { q: "Camping or Hotel?", a: "Camping", b: "Hotel", category: "adventure" },
+            { q: "Photos or Videos?", a: "Photos", b: "Videos", category: "lifestyle" },
+            { q: "Roller Coaster or Ferris Wheel?", a: "Roller Coaster", b: "Ferris Wheel", category: "adventure" },
+            { q: "Pasta or Burgers?", a: "Pasta", b: "Burgers", category: "lifestyle" },
+            { q: "Video Call or Voice Call?", a: "Video", b: "Voice", category: "social" },
+            { q: "Summer Dress or Winter Coat?", a: "Summer Dress", b: "Winter Coat", category: "lifestyle" },
+            { q: "Arcade or Board Game?", a: "Arcade", b: "Board Game", category: "social" },
+            { q: "Bike or Walk?", a: "Bike", b: "Walk", category: "energy" },
+            { q: "Festival or Concert?", a: "Festival", b: "Concert", category: "social" },
+            { q: "Couch or Bed?", a: "Couch", b: "Bed", category: "lifestyle" },
+            { q: "Smoothie or Juice?", a: "Smoothie", b: "Juice", category: "lifestyle" },
+            { q: "Truth or Dare?", a: "Truth", b: "Dare", category: "adventure" },
+            { q: "Mall or Online Shopping?", a: "Mall", b: "Online", category: "social" },
+            { q: "Candle or Diffuser?", a: "Candle", b: "Diffuser", category: "lifestyle" },
+            { q: "Sunrise Hike or Late Night Drive?", a: "Sunrise Hike", b: "Late Night Drive", category: "energy" },
+            { q: "Surprise Party or Planned Party?", a: "Surprise", b: "Planned", category: "adventure" }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+        let startTime = 0;
+        let questionStartTime = 0;
+
+        function showIntro() {
+            document.getElementById('game').innerHTML = `
+                <div class="intro">
+                    <p style="font-size: 1.3em; color: #667eea; margin-bottom: 25px;">⚡ How fast can you decide? ⚡</p>
+                    <p>30 quick questions. Just tap your gut reaction!</p>
+                    <p style="font-size: 0.9em; color: #999; margin-top: 10px;">No wrong answers, no thinking required 😊</p>
+                </div>
+                <button class="start-btn" onclick="startGame()">Let's Go! 🚀</button>
+            `;
+        }
+
+        function startGame() {
+            currentQuestion = 0;
+            answers = [];
+            startTime = Date.now();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            questionStartTime = Date.now();
+            const q = questions[currentQuestion];
+            const progress = ((currentQuestion) / questions.length) * 100;
+            
+            document.getElementById('game').innerHTML = `
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+                <div class="question-counter">${currentQuestion + 1} of ${questions.length}</div>
+                <div class="question">${q.q}</div>
+                <div class="options">
+                    <div class="option" onclick="answer('a')">${q.a}</div>
+                    <div class="option" onclick="answer('b')">${q.b}</div>
+                </div>
+            `;
+        }
+
+        function answer(choice) {
+            const responseTime = Date.now() - questionStartTime;
+            answers.push({
+                choice: choice,
+                category: questions[currentQuestion].category,
+                time: responseTime
+            });
+            
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function analyzePersonality() {
+            const scores = {
+                adventure: 0,
+                social: 0,
+                energy: 0,
+                lifestyle: 0
+            };
+
+            answers.forEach(ans => {
+                if (ans.choice === 'a') {
+                    scores[ans.category]++;
+                }
+            });
+
+            // Determine personality type based on dominant traits
+            const adventureScore = scores.adventure;
+            const socialScore = scores.social;
+            const energyScore = scores.energy;
+            
+            let type = "";
+            let desc = "";
+            let emoji = "";
+
+            // Adventure dimension
+            if (adventureScore >= 4) {
+                type = "Bold";
+                emoji = "🔥";
+            } else {
+                type = "Chill";
+                emoji = "☕";
+            }
+
+            // Energy dimension
+            if (energyScore >= 4) {
+                type += " Energetic";
+            } else {
+                type += " Thoughtful";
+            }
+
+            // Social dimension
+            if (socialScore >= 4) {
+                type += " Social Butterfly";
+                emoji += " 🦋";
+            } else {
+                type += " Deep Thinker";
+                emoji += " 💭";
+            }
+
+            // Generate description based on combination
+            if (adventureScore >= 4 && energyScore >= 4) {
+                desc = "You're someone who thrives on excitement and new experiences. You make quick decisions because you trust your instincts. People are drawn to your spontaneous energy and your willingness to take chances. You'd rather try something new and fail than wonder 'what if.'";
+            } else if (adventureScore >= 4 && energyScore < 4) {
+                desc = "You crave adventure but on your own terms. You're brave when it matters, but you also know when to slow down and savor the moment. You're the friend who plans epic trips but also appreciates quiet reflection. Balance is your superpower.";
+            } else if (adventureScore < 4 && energyScore >= 4) {
+                desc = "You bring high energy to everything, but comfort is your foundation. You're the life of the party when you're with your people, but home is where your heart is. You love familiarity with a side of fun—routine with a twist.";
+            } else {
+                desc = "You're the calm in the chaos. While others rush, you take your time to really feel and understand. You value depth over speed, quality over quantity. People come to you when they need someone who truly listens and cares.";
+            }
+
+            return { type: type + " " + emoji, desc: desc };
+        }
+
+        function showResults() {
+            const totalTime = Math.round((Date.now() - startTime) / 1000);
+            const avgTime = Math.round(totalTime / questions.length * 10) / 10;
+            
+            let speedBadge = "";
+            if (totalTime < 40) {
+                speedBadge = "⚡ Lightning Fast! ⚡";
+            } else if (totalTime < 60) {
+                speedBadge = "🚀 Speed Demon! 🚀";
+            } else if (totalTime < 90) {
+                speedBadge = "🤔 Thoughtful Decider 🤔";
+            } else {
+                speedBadge = "🧘 Careful Chooser 🧘";
+            }
+
+            const personality = analyzePersonality();
+
+            document.getElementById('game').innerHTML = `
+                <div class="result">
+                    <h2>Your Results! 🎊</h2>
+                    
+                    <div class="badge">${speedBadge}</div>
+                    
+                    <div class="personality-type">
+                        <h3>${personality.type}</h3>
+                        <p class="personality-desc">${personality.desc}</p>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span>Total Time:</span>
+                            <span class="stat-value">${totalTime} seconds</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Avg Per Question:</span>
+                            <span class="stat-value">${avgTime}s</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Questions:</span>
+                            <span class="stat-value">${questions.length}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="restart" onclick="startGame()">Play Again! 🔄</button>
+                </div>
+            `;
+        }
+
+        // Start with intro
+        showIntro();
+    </script>
+</body>
+</html>
